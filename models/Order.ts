@@ -2,7 +2,7 @@ import mongoose, { SchemaDefinition } from 'mongoose';
 
 const orderSchema = new mongoose.Schema<SchemaDefinition>(
 	{
-		orderedBy: { type: mongoose.Types.ObjectId, required: true },
+		userId: { type: mongoose.Types.ObjectId, required: true },
 		products: [
 			{
 				type: mongoose.Types.ObjectId,
@@ -22,13 +22,21 @@ const orderSchema = new mongoose.Schema<SchemaDefinition>(
 				type: String,
 				required: true,
 			},
+			mobile: {
+				type: Number,
+				required: true,
+			},
 			pin: Number,
 			addressLine: String,
-			country: 'UAE',
+			country: {
+				type: String,
+				default: 'UAE',
+				required: true,
+			},
 		},
 		status: {
 			type: String,
-			enum: ['Pending', 'Confirmed', 'Delivered'],
+			enum: ['Pending', 'Confirmed', 'Delivered', 'Cancled'],
 		},
 		payment: {
 			mode: {

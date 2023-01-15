@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, response } from 'express';
 import { hash } from 'bcryptjs';
 import User from '../models/User';
 
@@ -15,17 +15,18 @@ export async function postUser(req: Request, res: Response, next: NextFunction) 
 
 export async function patchUser(req: Request, res: Response, next: NextFunction) {
 	try {
-		const id = req.body.id;
+		const id = req.body.userId;
 		const password = await hash(req.body.password, 10);
-		User.findByIdAndUpdate(id, { ...req.body, password: password }, { new: true, runValidators: true }).exec(
-			(err, result) => {
-				if (err) {
-					next(err);
-				} else {
-					res.status(200).send({ message: 'user updated', user: result });
-				}
-			}
+		const result = await User.findByIdAndUpdate(
+			id,
+			{ ...req.body, password: password },
+			{ new: true, runValidators: true }
 		);
+		if (result === null) {
+			res.status(404).send({ messsage: 'user does not exist' });
+		} else {
+			res.status(200).send({ message: 'user updated', user: result });
+		}
 	} catch (err) {
 		next(err);
 	}

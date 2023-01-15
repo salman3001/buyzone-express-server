@@ -5,6 +5,10 @@ import onSignalEvent from './utills/OnSignalEvent';
 import userRoute from './routes/users';
 import productRoute from './routes/products';
 import reviewsRoute from './routes/reviews';
+import ordersRoute from './routes/orders';
+import loginRoute from './routes/login';
+import adminOrdersRoute from './routes/adminOrders';
+
 import path from 'path';
 
 dotenv.config();
@@ -25,6 +29,9 @@ app.get('/', (req, res) => {
 app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/reviews', reviewsRoute);
+app.use('/orders', ordersRoute);
+app.use('/login', loginRoute);
+app.use('/admin/orders', adminOrdersRoute);
 
 // 404 not found routes
 app.get('*', (req, res) => {

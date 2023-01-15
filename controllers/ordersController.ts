@@ -1,16 +1,17 @@
 import { NextFunction, Request, response, Response } from 'express';
 import mongoose from 'mongoose';
-import Product from '../models/Product';
 import Order from '../models/Order';
 
 export const getOrder = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const id = req.params.id;
-		Order.findById(id).exec((err, result) => {
+		const { userId } = req.body;
+		Order.find({ userId: userId }).exec((err, result) => {
 			if (err) {
 				next(err);
+			} else if (result === null) {
+				res.status(404).send({ message: 'No orders found' });
 			} else {
-				response.status(200).send({ Order: result });
+				res.status(200).send({ Orders: result });
 			}
 		});
 	} catch (error) {
@@ -20,24 +21,10 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
 
 export const postOrder = async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		const { userId } = req.body;
 		const data = req.body;
-		const order = Order.create(data);
-		res.status(200).send(Order);
-	} catch (error) {
-		next(error);
-	}
-};
-
-export const deleteOrder = async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const id = req.body;
-		Order.findByIdAndDelete(id).exec((err, result) => {
-			if (err) {
-				next(err);
-			} else {
-				response.status(200).send({ message: 'Order deleted successfully' });
-			}
-		});
+		const order = await Order.create({ ...data, userId: userId });
+		res.status(200).send({ message: 'successfull', order });
 	} catch (error) {
 		next(error);
 	}
@@ -45,14 +32,26 @@ export const deleteOrder = async (req: Request, res: Response, next: NextFunctio
 
 export const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const id = req.body.id;
-		Order.findByIdAndUpdate(id, req.body, { runValidators: true, new: true }).exec((err, result) => {
-			if (err) {
-				next(err);
+		const { id } = req.query;
+		const { userId } = req.body;
+		const order = await Order.findById(id);
+		if (order) {
+			if (userId === (order.userId as any).toString()) {
+				Order.findByIdAndUpdate(id, req.body, { runValidators: true, new: true }).exec((err, result) => {
+					if (err) {
+						next(err);
+					} else if (result === null) {
+						res.status(404).send({ message: 'Order not found' });
+					} else {
+						res.status(200).send({ order: result });
+					}
+				});
 			} else {
-				res.status(200).send(result);
+				res.status(401).send({ message: 'You are not authorized to update this order' });
 			}
-		});
+		} else {
+			res.status(404).send({ message: 'order not found' });
+		}
 	} catch (error) {
 		next(error);
 	}

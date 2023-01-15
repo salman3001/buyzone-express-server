@@ -6,7 +6,7 @@ interface IRequest {
 	files: Express.Multer.File;
 	id: ObjectId;
 }
-export async function getProduct(req: Request, res: Response, next: NextFunction) {
+export async function getProducts(req: Request, res: Response, next: NextFunction) {
 	try {
 		const products = await Product.find();
 		res.status(200).send(products);

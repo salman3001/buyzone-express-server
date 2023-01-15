@@ -1,9 +1,10 @@
+import { isLoggedin } from './../middleware/isLoggedin';
 import express from 'express';
 
-import { deleteOrder, getOrders, postOrder, updateOrder } from '../controllers/ordersController';
+import { getOrder, postOrder, updateOrder } from '../controllers/ordersController';
 
 const router = express.Router();
 
-router.route('/Orders').get(getOrders).post(postOrder).patch(updateOrder).delete(deleteOrder);
+router.route('/').get(isLoggedin, getOrder).post(isLoggedin, postOrder);
 
 export default router;
