@@ -25,7 +25,7 @@ export const updateOrder = async (req: Request, res: Response, next: NextFunctio
 		if (order) {
 			order.status = req.body.status;
 			const updatedOrder = await order.save({ validateBeforeSave: true });
-			res.status(201).send({ message: 'order not found', order: updatedOrder });
+			res.status(201).send({ message: 'order updated successfully', order: updatedOrder });
 		} else {
 			res.status(404).send({ message: 'order not found' });
 		}
