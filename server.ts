@@ -2,14 +2,8 @@ import express, { urlencoded } from 'express';
 import dotenv from 'dotenv';
 import dbConnect from './utills/dbConnect';
 import onSignalEvent from './utills/OnSignalEvent';
-import userRoute from './routes/users';
-import productRoute from './routes/products';
-import reviewsRoute from './routes/reviews';
-import ordersRoute from './routes/orders';
-import loginRoute from './routes/login';
-import adminOrdersRoute from './routes/adminOrders';
-
-import path from 'path';
+import useRoutes from './routes/allRoutes';
+import useMiddlewares from './middleware/allMiddlewares';
 
 dotenv.config();
 
@@ -18,28 +12,13 @@ const port = process.env.PORT;
 const app = express();
 
 //midlewares
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use('/images', express.static('./images'));
+useMiddlewares(app);
 
 // routes
-app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, 'index.html'));
-});
-app.use('/users', userRoute);
-app.use('/products', productRoute);
-app.use('/reviews', reviewsRoute);
-app.use('/orders', ordersRoute);
-app.use('/login', loginRoute);
-app.use('/admin/orders', adminOrdersRoute);
-
-// 404 not found routes
-app.get('*', (req, res) => {
-	res.sendStatus(404).send({ message: 'server error' });
-});
+useRoutes(app);
 
 //Error handler middleware
-app.use((err, req, res, next) => {
+app.use((err: any, req: any, res: any, next: any) => {
 	res.status(500).send(err?.message || 'server error');
 });
 
