@@ -1,10 +1,10 @@
-import { isLoggedin } from './../middleware/isLoggedin';
 import jwt from 'jsonwebtoken';
 import express from 'express';
 import { login } from '../controllers/loginController';
+import passport from 'passport';
 
 const router = express.Router();
 
-router.route('/').post(login);
+router.route('/').post(passport.authenticate('local'), login);
 
 export default router;

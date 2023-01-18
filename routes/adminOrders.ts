@@ -1,11 +1,11 @@
 import { isAdmin } from './../middleware/isAdmin';
-import { isLoggedin } from './../middleware/isLoggedin';
+import { isAuth } from '../middleware/isAuth';
 import express from 'express';
 
 import { getOrder, updateOrder } from '../controllers/ordersController';
 
 const router = express.Router();
 
-router.route('/').get(isLoggedin, isAdmin, getOrder).patch(isLoggedin, isAdmin, updateOrder);
+router.route('/').get(isAuth, isAdmin, getOrder).patch(isAuth, isAdmin, updateOrder);
 
 export default router;

@@ -15,10 +15,10 @@ export async function postUser(req: Request, res: Response, next: NextFunction) 
 
 export async function patchUser(req: Request, res: Response, next: NextFunction) {
 	try {
-		const id = req.body.userId;
+		const userId = req.user?._id;
 		const password = await hash(req.body.password, 10);
 		const result = await User.findByIdAndUpdate(
-			id,
+			userId,
 			{ ...req.body, password: password },
 			{ new: true, runValidators: true }
 		);

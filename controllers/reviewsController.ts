@@ -4,8 +4,8 @@ import Review from '../models/Reviews';
 
 export const getReviews = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const id = new mongoose.Types.ObjectId(req.query.id);
-		Review.find({ product: id }).exec((err, result) => {
+		const productId = new mongoose.Types.ObjectId(req.query?.id);
+		Review.find({ product: productId }).exec((err, result) => {
 			if (err) {
 				next(err);
 			} else {
@@ -19,7 +19,7 @@ export const getReviews = async (req: Request, res: Response, next: NextFunction
 
 export const postReview = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const userId = new mongoose.Types.ObjectId(req.body.userId);
+		const userId = new mongoose.Types.ObjectId(req.user?._id);
 		const data = req.body;
 		const review = await Review.create([{ ...data, reviewedBy: userId }], { validateBeforeSave: true });
 		res.status(200).send(review);
@@ -31,9 +31,7 @@ export const postReview = async (req: Request, res: Response, next: NextFunction
 export const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.query;
-		const userId = req.body.userId;
-		console.log(userId);
-
+		const userId = req.user?._id;
 		const review = await Review.findById(id);
 		if (review === null) {
 			res.status(404).send({ message: 'Review not foud' });
@@ -56,7 +54,7 @@ export const deleteReview = async (req: Request, res: Response, next: NextFuncti
 
 export const updateReview = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const userId = req.body.userId;
+		const userId = req.user?._id;
 		const id = req.query.id;
 
 		Review.findById(id).exec(async (err, review) => {

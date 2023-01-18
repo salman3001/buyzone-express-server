@@ -4,7 +4,7 @@ import Order from '../models/Order';
 
 export const getOrder = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { userId } = req.body;
+		const { userId } = req.user?.id;
 		Order.find({ userId: userId }).exec((err, result) => {
 			if (err) {
 				next(err);
@@ -21,7 +21,9 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
 
 export const postOrder = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { userId } = req.body;
+		const userId = req.user._id;
+		console.log(userId);
+
 		const data = req.body;
 		const order = await Order.create({ ...data, userId: userId });
 		res.status(200).send({ message: 'successfull', order });
@@ -33,7 +35,7 @@ export const postOrder = async (req: Request, res: Response, next: NextFunction)
 export const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { id } = req.query;
-		const { userId } = req.body;
+		const { userId } = req.user?._id;
 		const order = await Order.findById(id);
 		if (order) {
 			if (userId === (order.userId as any).toString()) {

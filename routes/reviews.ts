@@ -1,15 +1,10 @@
-import { isLoggedin } from './../middleware/isLoggedin';
+import { isAuth } from '../middleware/isAuth';
 import express from 'express';
 
 import { deleteReview, getReviews, postReview, updateReview } from '../controllers/reviewsController';
 
 const router = express.Router();
 
-router
-	.route('/')
-	.get(getReviews)
-	.post(isLoggedin, postReview)
-	.patch(isLoggedin, updateReview)
-	.delete(isLoggedin, deleteReview);
+router.route('/').get(getReviews).post(isAuth, postReview).patch(isAuth, updateReview).delete(isAuth, deleteReview);
 
 export default router;

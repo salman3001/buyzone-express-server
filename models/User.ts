@@ -1,3 +1,4 @@
+import { compare } from 'bcryptjs';
 import mongoose, { Schema, SchemaDefinition, Document } from 'mongoose';
 
 export interface UserSchema extends Document {
@@ -6,6 +7,7 @@ export interface UserSchema extends Document {
 	email: string;
 	password: string;
 	isAdmin: boolean;
+	verifyPassword: (password: string) => Boolean;
 }
 
 const userSchema = new Schema<UserSchema>(
@@ -46,7 +48,14 @@ const userSchema = new Schema<UserSchema>(
 			default: false,
 		},
 	},
-	{ timestamps: true }
+	{
+		timestamps: true,
+		methods: {
+			verifyPassword: async function (password: string) {
+				return await compare(password, this.password);
+			},
+		},
+	}
 );
 
 const User = mongoose.model('User', userSchema);
