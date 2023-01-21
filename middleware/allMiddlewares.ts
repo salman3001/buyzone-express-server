@@ -9,7 +9,7 @@ export default (app: Express) => {
 	app.use(express.json());
 	app.use(
 		session({
-			secret: process.env.SESSION_SECRTE as string,
+			secret: process.env.SESSION_SECRETE as string,
 			resave: false,
 			saveUninitialized: true,
 			store: mongoStore.create({ mongoUrl: process.env.MONGODB_URI, autoRemoveInterval: 10 }),
