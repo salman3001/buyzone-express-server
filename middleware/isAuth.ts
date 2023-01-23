@@ -1,7 +1,6 @@
-import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 
-export const isAuth = (req: Request, res: Response, next: NextFunction) => {
+export const isAuth = (req: Request, res: Response, next: NextFunction): void => {
 	try {
 		if (req.isAuthenticated()) {
 			next();

@@ -1,13 +1,13 @@
 import { compare } from 'bcryptjs';
-import mongoose, { Schema, SchemaDefinition, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface UserSchema extends Document {
+export interface UserSchema {
 	firstName: string;
 	lastName: string;
 	email: string;
 	password: string;
 	isAdmin: boolean;
-	verifyPassword: (password: string) => Boolean;
+	verifyPassword: (password: string) => boolean;
 }
 
 const userSchema = new Schema<UserSchema>(
@@ -51,7 +51,7 @@ const userSchema = new Schema<UserSchema>(
 	{
 		timestamps: true,
 		methods: {
-			verifyPassword: async function (password: string) {
+			verifyPassword: async function (password: string): Promise<boolean> {
 				return await compare(password, this.password);
 			},
 		},

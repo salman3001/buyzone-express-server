@@ -1,0 +1,91 @@
+[
+	{
+		"_id": "78a6f36d-3a87-4381-8e45-48079b66e276",
+		"colId": "history",
+		"containerId": "",
+		"name": "https://localhost:4000/api/products",
+		"url": "http://localhost:4000/api/products",
+		"method": "GET",
+		"sortNum": 0,
+		"created": "2023-01-22T19:24:09.167Z",
+		"modified": "2023-01-22T19:26:32.171Z",
+		"headers": [],
+		"params": [],
+		"tests": []
+	},
+	{
+		"_id": "d4c8834b-f072-4f59-9833-1fd8500a8161",
+		"colId": "history",
+		"containerId": "",
+		"name": "https://localhost:4000/api/products ",
+		"url": "http://localhost:4000/api/products/63c33ab395e5372216133c57",
+		"method": "DELETE",
+		"sortNum": 0,
+		"created": "2023-01-22T19:24:09.167Z",
+		"modified": "2023-01-22T19:34:18.172Z",
+		"headers": [],
+		"params": [],
+		"tests": []
+	},
+	{
+		"_id": "5c993187-4410-46fd-ace9-4fa49b007126",
+		"colId": "history",
+		"containerId": "",
+		"name": "https://localhost:4000/api/products ",
+		"url": "http://localhost:4000/api/products/63c33ab395e5372216133c57",
+		"method": "PATCH",
+		"sortNum": 0,
+		"created": "2023-01-22T19:24:09.167Z",
+		"modified": "2023-01-22T19:52:03.399Z",
+		"headers": [],
+		"params": [],
+		"body": {
+			"type": "json",
+			"raw": "{\"category\":\"tablet\"}",
+			"form": []
+		},
+		"tests": []
+	},
+	{
+		"_id": "3113625d-a8af-484d-aaba-36b342e7e178",
+		"colId": "history",
+		"containerId": "",
+		"name": "http://localhost:4000/api/products",
+		"url": "http://localhost:4000/api/products",
+		"method": "POST",
+		"sortNum": 0,
+		"created": "2023-01-22T19:31:16.598Z",
+		"modified": "2023-01-22T19:31:31.811Z",
+		"headers": [],
+		"params": [],
+		"body": {
+			"type": "formdata",
+			"raw": "",
+			"form": [
+				{
+					"name": "name",
+					"value": "askjasaksj"
+				},
+				{
+					"name": "category",
+					"value": "mobile"
+				},
+				{
+					"name": "price",
+					"value": "500"
+				},
+				{
+					"name": "inStock",
+					"value": "6"
+				}
+			],
+			"files": [
+				{
+					"name": "ProductImage",
+					"value": "../../../../../Downloads/4440058-hd-wallpapers.jpg"
+				}
+			]
+		},
+		"tests": []
+	}
+]

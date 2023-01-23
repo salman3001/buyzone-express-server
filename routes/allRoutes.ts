@@ -8,7 +8,7 @@ import logoutRoute from './logout';
 import adminOrdersRoute from './adminOrders';
 import path from 'path';
 
-export default (app: Express) => {
+export default (app: Express): void => {
 	app.get('/', (req, res) => {
 		res.sendFile(path.join(__dirname, 'index.html'));
 	});

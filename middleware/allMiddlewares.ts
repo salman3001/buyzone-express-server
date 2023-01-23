@@ -1,9 +1,9 @@
-import express, { Errback, Express, NextFunction, Request, Response } from 'express';
+import express, { Express } from 'express';
 import session from 'express-session';
 import mongoStore from 'connect-mongo';
 import usePassport from './usePassport';
 
-export default (app: Express) => {
+export default (app: Express): void => {
 	// request parsers
 	app.use(express.urlencoded({ extended: false }));
 	app.use(express.json());
@@ -18,11 +18,11 @@ export default (app: Express) => {
 			},
 		})
 	);
-	//useing passport middleware
+	// useing passport middleware
 	usePassport(app);
 
-	//static files midleware
+	// static files midleware
 	app.use('/images', express.static('./images'));
 
-	//error handler middleware
+	// error handler middleware
 };

@@ -1,76 +1,97 @@
 import { NextFunction, Response, Request } from 'express';
 import Product from '../models/Product';
 import { promises as fs } from 'fs';
-import { ObjectId } from 'mongoose';
-interface IRequest {
-	files: Express.Multer.File;
-	id: ObjectId;
+
+interface IProductQuery {
+	search: string;
+	category: string;
+	priceStart: number;
+	priceEnd: number;
+	inStock: boolean;
 }
-export async function getProducts(req: Request, res: Response, next: NextFunction) {
+
+export async function getProducts(
+	req: Request<unknown, unknown, unknown, IProductQuery>,
+	res: Response,
+	next: NextFunction
+): Promise<void> {
 	try {
-		const products = await Product.find();
+		const { search, category, priceStart, priceEnd, inStock } = req.query;
+
+		const products = await Product.find({ category });
 		res.status(200).send(products);
 	} catch (error) {
 		next(error);
 	}
 }
 
-export async function getSingleProduct(req: Request, res: Response, next: NextFunction) {
+export async function getSingleProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
 	try {
 		const id = req.params.id;
 		const product = await Product.findById(id);
-		product
-			? res.status(200).send({ message: 'Product found', product: product })
+		product !== null
+			? res.status(200).send({ message: 'Product found', product })
 			: res.status(404).send({ message: 'user not found' });
 	} catch (error) {
 		next(error);
 	}
 }
 
-export async function addProduct(req: Request<IRequest>, res: Response, next: NextFunction) {
+export async function addProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
 	try {
 		const productData = req.body;
-		const urls = (req.files as any[])?.map((file) => file.path);
-		const addedProduct = await Product.create({ ...productData, Urls: urls });
+		const images = (req.files as any[])?.map((file) => file.path);
+		const addedProduct = await Product.create({ ...productData, images });
 		res.status(200).send({ message: 'Product added successfully', product: addedProduct });
 	} catch (error) {
 		next(error);
 	}
 }
 
-export async function updateProduct(req: Request<IRequest>, res: Response, next: NextFunction) {
+export async function updateProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
 	try {
 		// getting data from request
 		const id = req.params.id;
 		const productData = req.body;
-		const newurls = (req.files as any[])?.map((file) => file.path);
-		// getting old data from database
-		const oldProduct = await Product.findById(id);
-		const urls = oldProduct?.Urls as [];
+		const files = req.files as Express.Multer.File[];
+		const newImages = files !== undefined ? files.map((file) => file.path) : undefined;
 
 		// updataing product
-		const updatedProduct = await Product.findByIdAndUpdate(
-			id,
-			{ ...productData, Urls: newurls },
-			{ runValidators: true, new: true }
-		);
+		if (newImages != null) {
+			// getting old data from database
+			const oldProduct = await Product.findById(id);
+			const oldImages = oldProduct?.images as string[];
+			const updatedProduct = await Product.findByIdAndUpdate(
+				id,
+				{ ...productData, images: newImages },
+				{ runValidators: true, new: true }
+			);
 
-		// deleting old photos
-		urls.map((url) => {
-			fs.rm(url)
-				.then(() => {
-					console.log(`file ${url} removed from server`);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		});
+			// deleting old photos
+			oldImages.forEach((image) => {
+				fs.rm(image)
+					.then(() => {
+						console.log(`file ${image} removed from server`);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			});
 
-		res.status(200).send({ message: 'Product updated successfully', product: updatedProduct });
+			res.status(200).send({ message: 'Product updated successfully', product: updatedProduct });
+		} else {
+			const updatedProduct = await Product.findByIdAndUpdate(
+				id,
+				{ ...productData },
+				{ runValidators: true, new: true }
+			);
+			res.status(200).send({ message: 'Product updated successfully', product: updatedProduct });
+		}
 	} catch (error) {
-		if (error) {
+		// eslint-disable-next-line no-extra-boolean-cast
+		if (Boolean(error)) {
 			// deleting uploaded photo if form updation failed due to data invalidation
-			(req.files as any[]).map((file) => {
+			(req.files as Express.Multer.File[]).forEach((file) => {
 				fs.rm(file.path)
 					.then(() => {
 						console.log(`uploaded files ${file.filename} removed because product updatation failed.`);
@@ -85,22 +106,22 @@ export async function updateProduct(req: Request<IRequest>, res: Response, next:
 	}
 }
 
-export async function deleteProduct(req: Request, res: Response, next: NextFunction) {
+export async function deleteProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
 	try {
 		const id = req.params.id;
 		// getting product photos names from from server
 		const product = await Product.findById(id);
-		const urls = product?.Urls as [];
+		const images = product?.images as [];
 
-		//deleting product from database
+		// deleting product from database
 		const deletedProduct = await Product.findByIdAndDelete(id, { new: true });
 		res.status(200).send({ message: 'Product deleted successfully', product: deletedProduct });
 
 		// deleting photos from server
-		urls.map((url) => {
-			fs.rm(url)
+		images.forEach((image: string) => {
+			fs.rm(image)
 				.then(() => {
-					console.log(`file ${url} removed from server`);
+					console.log(`file ${image} removed from server`);
 				})
 				.catch((err) => {
 					console.log(err);

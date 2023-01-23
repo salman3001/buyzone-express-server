@@ -1,12 +1,20 @@
-import { NextFunction, Request, response, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Review from '../models/Reviews';
 
-export const getReviews = async (req: Request, res: Response, next: NextFunction) => {
+interface queryType {
+	id: number;
+}
+
+export const getReviews = async (
+	req: Request<any, any, any, queryType>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
 	try {
 		const productId = new mongoose.Types.ObjectId(req.query?.id);
 		Review.find({ product: productId }).exec((err, result) => {
-			if (err) {
+			if (err != null) {
 				next(err);
 			} else {
 				res.status(200).send({ reviews: result });
@@ -17,7 +25,7 @@ export const getReviews = async (req: Request, res: Response, next: NextFunction
 	}
 };
 
-export const postReview = async (req: Request, res: Response, next: NextFunction) => {
+export const postReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const userId = new mongoose.Types.ObjectId(req.user?._id);
 		const data = req.body;

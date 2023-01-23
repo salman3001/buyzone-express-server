@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
 import { login } from '../controllers/loginController';
 import passport from 'passport';

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../models/User';
-export default (app: Express) => {
+export default (app: Express): void => {
 	passport.use(
 		new LocalStrategy(
 			{
@@ -11,17 +11,20 @@ export default (app: Express) => {
 				passwordField: 'password',
 			},
 			function (email, password, done) {
-				User.findOne({ email: email }).exec((err, user) => {
-					if (err) {
-						return done(err);
+				User.findOne({ email }).exec((err, user) => {
+					if (err != null) {
+						done(err);
+						return;
 					}
-					if (!user) {
-						return done(null, false);
+					if (user == null) {
+						done(null, false);
+						return;
 					}
 					if (!user.verifyPassword(password)) {
-						return done(null, false);
+						done(null, false);
+						return;
 					}
-					return done(null, user);
+					done(null, user);
 				});
 			}
 		)
@@ -30,7 +33,7 @@ export default (app: Express) => {
 		done(null, { id: user._id, isAdmin: user.isAdmin });
 	});
 
-	passport.deserializeUser(function (id, done) {
+	passport.deserializeUser(function (id: string, done) {
 		User.findById(new mongoose.Types.ObjectId(id)).exec((err, user) => {
 			done(err, user);
 		});

@@ -1,9 +1,9 @@
-import mongoose, { mongo, SchemaDefinition } from 'mongoose';
+import mongoose, { SchemaDefinition } from 'mongoose';
 interface IreviewSchema {
 	reviewedBy: mongoose.Types.ObjectId;
 	product: mongoose.Types.ObjectId;
-	rating: Number;
-	comment: String;
+	rating: number;
+	comment: string;
 }
 const reviewSchemas = new mongoose.Schema<SchemaDefinition<IreviewSchema>>(
 	{

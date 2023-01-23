@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { isAuth } from '../middleware/isAuth';
 import express from 'express';
 

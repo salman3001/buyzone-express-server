@@ -1,12 +1,11 @@
-import { NextFunction, Request, response, Response } from 'express';
-import mongoose from 'mongoose';
+import { NextFunction, Request, Response } from 'express';
 import Order from '../models/Order';
 
-export const getOrder = async (req: Request, res: Response, next: NextFunction) => {
+export const getOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const { userId } = req.user?.id;
-		Order.find({ userId: userId }).exec((err, result) => {
-			if (err) {
+		const userId = req.user?._id;
+		Order.find({ _id: userId }).exec((err, result) => {
+			if (err != null) {
 				next(err);
 			} else if (result === null) {
 				res.status(404).send({ message: 'No orders found' });
@@ -19,28 +18,26 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction) 
 	}
 };
 
-export const postOrder = async (req: Request, res: Response, next: NextFunction) => {
+export const postOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
-		const userId = req.user._id;
-		console.log(userId);
-
+		const userId = req.user?._id;
 		const data = req.body;
-		const order = await Order.create({ ...data, userId: userId });
+		const order = await Order.create({ ...data, userId });
 		res.status(200).send({ message: 'successfull', order });
 	} catch (error) {
 		next(error);
 	}
 };
 
-export const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
+export const updateOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.query;
-		const { userId } = req.user?._id;
+		const userId = req.user?._id;
 		const order = await Order.findById(id);
-		if (order) {
+		if (order != null) {
 			if (userId === (order.userId as any).toString()) {
 				Order.findByIdAndUpdate(id, req.body, { runValidators: true, new: true }).exec((err, result) => {
-					if (err) {
+					if (err != null) {
 						next(err);
 					} else if (result === null) {
 						res.status(404).send({ message: 'Order not found' });

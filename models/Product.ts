@@ -3,7 +3,8 @@ import mongoose, { Schema, SchemaDefinition } from 'mongoose';
 
 interface IproductSchema {
 	name: String;
-	Urls: String[];
+	images: String[];
+	category: String;
 	price: Number;
 	inStock: Number;
 	reviews: typeof mongoose.Types.ObjectId[];
@@ -17,7 +18,12 @@ const ProductSchema = new Schema<SchemaDefinition<IproductSchema>>(
 			max: [40, 'maximum 20 charecotrs allowed'],
 			required: true,
 		},
-		Urls: { type: [String], default: ['images/products/default.jpg'] },
+		images: { type: [String], default: ['images/products/default.jpg'] },
+		category: {
+			type: String,
+			trim: true,
+			required: true,
+		},
 		price: { type: Number, required: true },
 		inStock: { type: Number, required: true },
 	},

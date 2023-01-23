@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { isAdmin } from './../middleware/isAdmin';
 import express from 'express';
 import {
@@ -7,10 +8,14 @@ import {
 	getSingleProduct,
 	updateProduct,
 } from '../controllers/productController';
-import productImageUploader from '../middleware/productImageUplodaer';
+import imageUploader from '../middleware/productIimageUplodaer';
 
 const router = express.Router();
 
-router.route('/').get(getProducts).post(isAdmin, productImageUploader, addProduct);
-router.route('/:id').get(getSingleProduct).patch(isAdmin, productImageUploader, updateProduct).delete(deleteProduct);
+router.route('/').get(getProducts).post(isAdmin, imageUploader.array('productImages', 5), addProduct);
+router
+	.route('/:id')
+	.get(getSingleProduct)
+	.patch(isAdmin, imageUploader.array('productImages', 5), updateProduct)
+	.delete(deleteProduct);
 export default router;

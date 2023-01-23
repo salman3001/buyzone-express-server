@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
 import { postUser, patchUser } from '../controllers/userController';
 import { isAuth } from '../middleware/isAuth';
