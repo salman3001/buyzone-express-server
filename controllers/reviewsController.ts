@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Review from '../models/Reviews';
@@ -36,7 +37,7 @@ export const postReview = async (req: Request, res: Response, next: NextFunction
 	}
 };
 
-export const deleteReview = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const { id } = req.query;
 		const userId = req.user?._id;
@@ -46,7 +47,7 @@ export const deleteReview = async (req: Request, res: Response, next: NextFuncti
 		} else {
 			if (userId === (review.reviewedBy as any).toString()) {
 				const deletedReview = await Review.findByIdAndDelete(id);
-				if (deletedReview) {
+				if (deletedReview != null) {
 					res.status(200).send({ message: 'review deleted' });
 				} else {
 					next('server error');
@@ -60,13 +61,13 @@ export const deleteReview = async (req: Request, res: Response, next: NextFuncti
 	}
 };
 
-export const updateReview = async (req: Request, res: Response, next: NextFunction) => {
+export const updateReview = (req: Request, res: Response, next: NextFunction): void => {
 	try {
 		const userId = req.user?._id;
 		const id = req.query.id;
 
-		Review.findById(id).exec(async (err, review) => {
-			if (err) {
+		Review.findById(id).exec(async (err, review): Promise<void> => {
+			if (err != null) {
 				next(err);
 			} else if (review === null) {
 				res.status(404).send({ message: 'review not found' });
@@ -75,7 +76,7 @@ export const updateReview = async (req: Request, res: Response, next: NextFuncti
 					review.rating = req.body.rating;
 					review.comment = req.body.comment;
 					const updatedreview = await review.save({ validateBeforeSave: true });
-					res.status(201).send({ message: 'review updated' });
+					res.status(201).send({ message: 'review updated', review: updatedreview });
 				} else {
 					res.status(401).send({ message: 'not uthorized to update' });
 				}

@@ -4,13 +4,65 @@
 		"colId": "history",
 		"containerId": "",
 		"name": "https://localhost:4000/api/products",
-		"url": "http://localhost:4000/api/products",
+		"url": "http://localhost:4000/api/products?inStock=false&sortPrice=1&sortDate=1",
 		"method": "GET",
 		"sortNum": 0,
 		"created": "2023-01-22T19:24:09.167Z",
-		"modified": "2023-01-22T19:26:32.171Z",
+		"modified": "2023-01-24T02:48:05.412Z",
 		"headers": [],
-		"params": [],
+		"params": [
+			{
+				"name": "inStock",
+				"value": "false",
+				"isPath": false
+			},
+			{
+				"name": "category",
+				"value": "tablet",
+				"isDisabled": true,
+				"isPath": false
+			},
+			{
+				"name": "search",
+				"value": "ipho",
+				"isDisabled": true,
+				"isPath": false
+			},
+			{
+				"name": "priceStart",
+				"value": "20",
+				"isDisabled": true,
+				"isPath": false
+			},
+			{
+				"name": "priceEnd",
+				"value": "280",
+				"isDisabled": true,
+				"isPath": false
+			},
+			{
+				"name": "pageLimit",
+				"value": "2",
+				"isDisabled": true,
+				"isPath": false
+			},
+			{
+				"name": "pageSkip",
+				"value": "0",
+				"isDisabled": true,
+				"isPath": false
+			},
+			{
+				"name": "sortPrice",
+				"value": "1",
+				"isPath": false
+			},
+			{
+				"name": "sortDate",
+				"value": "1",
+				"isPath": false
+			}
+		],
 		"tests": []
 	},
 	{
@@ -86,6 +138,46 @@
 				}
 			]
 		},
+		"tests": []
+	},
+	{
+		"_id": "676afd53-1b20-4416-bc5a-6caaf9a7f9d0",
+		"colId": "history",
+		"containerId": "",
+		"name": "http://localhost:4000/api/products?catergory=mobile",
+		"url": "http://localhost:4000/api/products?catergory=mobile",
+		"method": "GET",
+		"sortNum": 0,
+		"created": "2023-01-23T02:06:32.623Z",
+		"modified": "2023-01-23T02:06:32.623Z",
+		"headers": [],
+		"params": [
+			{
+				"name": "catergory",
+				"value": "mobile",
+				"isPath": false
+			}
+		],
+		"tests": []
+	},
+	{
+		"_id": "01470cdb-3939-4288-bb61-bb54b0efd729",
+		"colId": "history",
+		"containerId": "",
+		"name": "http://localhost:4000/api/products?category=mobile",
+		"url": "http://localhost:4000/api/products?category=mobile",
+		"method": "GET",
+		"sortNum": 0,
+		"created": "2023-01-23T02:16:41.911Z",
+		"modified": "2023-01-23T02:16:41.911Z",
+		"headers": [],
+		"params": [
+			{
+				"name": "category",
+				"value": "mobile",
+				"isPath": false
+			}
+		],
 		"tests": []
 	}
 ]

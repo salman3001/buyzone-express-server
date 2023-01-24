@@ -3,11 +3,27 @@ import Product from '../models/Product';
 import { promises as fs } from 'fs';
 
 interface IProductQuery {
-	search: string;
+	search: RegExp;
 	category: string;
 	priceStart: number;
 	priceEnd: number;
-	inStock: boolean;
+	inStock: 'true' | 'false';
+	pageLimit: number;
+	pageSkip: number;
+	sortPrice: -1 | 1;
+	sortDate: 1 | -1;
+}
+
+interface IMatch {
+	category?: string;
+	name?: RegExp;
+	priceStart?: { $gte: number };
+	priceEnd?: { $lte: number };
+	inStock?: { $gte: 0 } | { $gt: 0 };
+}
+
+interface IPriceRange {
+	$and: Array<{ price: Partial<Record<'$gte' | '$lte', number>> }>;
 }
 
 export async function getProducts(
@@ -16,9 +32,43 @@ export async function getProducts(
 	next: NextFunction
 ): Promise<void> {
 	try {
-		const { search, category, priceStart, priceEnd, inStock } = req.query;
+		const {
+			search,
+			category,
+			priceStart = 0,
+			priceEnd = 10000000,
+			inStock = 'true',
+			pageLimit = 20,
+			pageSkip = 0,
+			sortPrice = 1,
+			sortDate = 1,
+		} = req.query;
 
-		const products = await Product.find({ category });
+		const match: IMatch = {};
+		if (category != null) match.category = category;
+		if (search != null) match.name = new RegExp(search, 'i');
+
+		if (inStock === 'true') {
+			match.inStock = { $gt: 0 };
+		} else if (inStock === 'false') {
+			match.inStock = { $gte: 0 };
+		} else {
+			match.inStock = { $gt: 0 };
+		}
+
+		const priceRang: IPriceRange = { $and: [{ price: { $gte: priceStart } }, { price: { $lte: priceEnd } }] };
+
+		if (priceStart != null) priceRang.$and[0].price.$gte = priceStart;
+		if (priceEnd != null) priceRang.$and[1].price.$lte = priceEnd;
+
+		const sort: { price?: 1 | -1; updatedAt?: 1 | -1 } = {};
+		if (sortPrice != null) sort.price = sortPrice;
+		if (sortDate != null) sort.updatedAt = sortDate;
+
+		const products = await Product.find({ ...match, ...priceRang })
+			.limit(pageLimit)
+			.skip(pageLimit * pageSkip)
+			.sort({ ...sort });
 		res.status(200).send(products);
 	} catch (error) {
 		next(error);

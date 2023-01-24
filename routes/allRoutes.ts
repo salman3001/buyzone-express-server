@@ -5,7 +5,7 @@ import reviewsRoute from './reviews';
 import ordersRoute from './orders';
 import loginRoute from './login';
 import logoutRoute from './logout';
-import adminOrdersRoute from './adminOrders';
+
 import path from 'path';
 
 export default (app: Express): void => {
@@ -19,7 +19,6 @@ export default (app: Express): void => {
 	app.use('/api/login', loginRoute);
 	app.use('/api/logout', logoutRoute);
 
-	app.use('/api/admin/orders', adminOrdersRoute);
 	app.get('*', (req, res) => {
 		res.sendStatus(404).send({ message: 'server error' });
 	});
