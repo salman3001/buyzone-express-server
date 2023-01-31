@@ -3,15 +3,15 @@ import Product from '../models/Product';
 import { promises as fs } from 'fs';
 
 interface IProductQuery {
-	search: RegExp;
+	search: string;
 	category: string;
-	priceStart: number;
-	priceEnd: number;
+	priceStart: string;
+	priceEnd: string;
 	inStock: 'true' | 'false';
-	pageLimit: number;
-	pageSkip: number;
-	sortPrice: -1 | 1;
-	sortDate: 1 | -1;
+	pageLimit: string;
+	pageSkip: string;
+	sortPrice: string;
+	sortDate: string;
 }
 
 interface IMatch {
@@ -35,13 +35,13 @@ export async function getProducts(
 		const {
 			search,
 			category,
-			priceStart = 0,
-			priceEnd = 10000000,
+			priceStart = '0',
+			priceEnd = '10000000',
 			inStock = 'true',
-			pageLimit = 20,
-			pageSkip = 0,
-			sortPrice = 1,
-			sortDate = 1,
+			pageLimit = '20',
+			pageSkip = '0',
+			sortPrice = '1',
+			sortDate = '1',
 		} = req.query;
 
 		const match: IMatch = {};
@@ -56,20 +56,22 @@ export async function getProducts(
 			match.inStock = { $gt: 0 };
 		}
 
-		const priceRang: IPriceRange = { $and: [{ price: { $gte: priceStart } }, { price: { $lte: priceEnd } }] };
+		const priceRang: IPriceRange = {
+			$and: [{ price: { $gte: Number(priceStart) } }, { price: { $lte: Number(priceEnd) } }],
+		};
 
-		if (priceStart != null) priceRang.$and[0].price.$gte = priceStart;
-		if (priceEnd != null) priceRang.$and[1].price.$lte = priceEnd;
+		if (priceStart != null) priceRang.$and[0].price.$gte = Number(priceStart);
+		if (priceEnd != null) priceRang.$and[1].price.$lte = Number(priceEnd);
 
-		const sort: { price?: 1 | -1; updatedAt?: 1 | -1 } = {};
-		if (sortPrice != null) sort.price = sortPrice;
-		if (sortDate != null) sort.updatedAt = sortDate;
+		const sort: { price?: number; updatedAt?: number } = {};
+		if (sortPrice != null) sort.price = Number(sortPrice);
+		if (sortDate != null) sort.updatedAt = Number(sortDate);
 
 		const products = await Product.find({ ...match, ...priceRang })
-			.limit(pageLimit)
-			.skip(pageLimit * pageSkip)
-			.sort({ ...sort });
-		res.status(200).send(products);
+			.limit(Number(pageLimit))
+			.skip(Number(pageLimit) * Number(pageSkip))
+			.sort({ ...(sort as { price: -1 | 1; updateAt: -1 | 1 }) });
+		res.status(200).json(products);
 	} catch (error) {
 		next(error);
 	}
@@ -92,7 +94,7 @@ export async function addProduct(req: Request, res: Response, next: NextFunction
 		const productData = req.body;
 		const images = (req.files as any[])?.map((file) => file.path);
 		const addedProduct = await Product.create({ ...productData, images });
-		res.status(200).send({ message: 'Product added successfully', product: addedProduct });
+		res.status(200).json({ message: 'Product added successfully', product: addedProduct });
 	} catch (error) {
 		next(error);
 	}

@@ -10,7 +10,7 @@ import path from 'path';
 
 export default (app: Express): void => {
 	app.get('/', (req, res) => {
-		res.sendFile(path.join(__dirname, 'index.html'));
+		res.sendFile(path.join(__dirname, '..', 'index.html'));
 	});
 	app.use('/api/users', userRoute);
 	app.use('/api/products', productRoute);
@@ -19,7 +19,7 @@ export default (app: Express): void => {
 	app.use('/api/login', loginRoute);
 	app.use('/api/logout', logoutRoute);
 
-	app.get('*', (req, res) => {
-		res.sendStatus(404).send({ message: 'server error' });
+	app.get('*', (req, res, next) => {
+		next(new Error('Page not found'));
 	});
 };

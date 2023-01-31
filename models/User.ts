@@ -1,4 +1,4 @@
-import { compare } from 'bcryptjs';
+import { compareSync } from 'bcryptjs';
 import mongoose, { Schema } from 'mongoose';
 
 export interface UserSchema {
@@ -51,8 +51,9 @@ const userSchema = new Schema<UserSchema>(
 	{
 		timestamps: true,
 		methods: {
-			verifyPassword: async function (password: string): Promise<boolean> {
-				return await compare(password, this.password);
+			verifyPassword: function (password: string): boolean {
+				const valid = compareSync(password, this.password);
+				return valid;
 			},
 		},
 	}

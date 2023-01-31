@@ -1,12 +1,12 @@
-import { timeStamp } from 'console';
 import mongoose, { Schema, SchemaDefinition } from 'mongoose';
 
 interface IproductSchema {
-	name: String;
-	images: String[];
-	category: String;
-	price: Number;
-	inStock: Number;
+	name: string;
+	images: string[];
+	category: string;
+	price: number;
+	inStock: number;
+	description: string;
 	reviews: typeof mongoose.Types.ObjectId[];
 }
 const ProductSchema = new Schema<SchemaDefinition<IproductSchema>>(
@@ -15,7 +15,7 @@ const ProductSchema = new Schema<SchemaDefinition<IproductSchema>>(
 			type: String,
 			trim: true,
 			min: [2, 'name should be minimum two charectors'],
-			max: [40, 'maximum 20 charecotrs allowed'],
+			max: [100, 'maximum 20 charecotrs allowed'],
 			required: true,
 		},
 		images: { type: [String], default: ['images/products/default.jpg'] },
@@ -26,6 +26,11 @@ const ProductSchema = new Schema<SchemaDefinition<IproductSchema>>(
 		},
 		price: { type: Number, required: true },
 		inStock: { type: Number, required: true },
+		description: {
+			type: String,
+			required: true,
+			max: 1000,
+		},
 	},
 	{ timestamps: true }
 );

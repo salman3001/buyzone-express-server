@@ -4,6 +4,8 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../models/User';
 export default (app: Express): void => {
+	app.use(passport.initialize());
+	app.use(passport.session());
 	passport.use(
 		new LocalStrategy(
 			{
@@ -13,14 +15,14 @@ export default (app: Express): void => {
 			function (email, password, done) {
 				User.findOne({ email }).exec((err, user) => {
 					if (err != null) {
-						done(err);
-						return;
+						done(null, false);
 					}
 					if (user == null) {
 						done(null, false);
 						return;
 					}
-					if (!user.verifyPassword(password)) {
+					const isAuthenticated = user.verifyPassword(password);
+					if (!isAuthenticated) {
 						done(null, false);
 						return;
 					}
@@ -38,7 +40,4 @@ export default (app: Express): void => {
 			done(err, user);
 		});
 	});
-
-	app.use(passport.initialize());
-	app.use(passport.session());
 };

@@ -2,11 +2,15 @@ import express from 'express';
 
 const router = express.Router();
 
-router.route('/').get((req, res, next) => {
-	console.log(req.session);
-	console.log(req.session);
-	req.session.save();
-	res.send('c');
+router.route('/').post((req, res, next) => {
+	req.logOut((err) => {
+		if (err != null) {
+			console.log(err);
+			next(err);
+			return;
+		}
+		res.status(200).json({ message: 'logout successfull' });
+	});
 });
 
 export default router;

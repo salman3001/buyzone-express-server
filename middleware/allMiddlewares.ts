@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import mongoStore from 'connect-mongo';
 import usePassport from './usePassport';
+import path from 'path';
 
 export default (app: Express): void => {
 	// request parsers
@@ -22,7 +23,7 @@ export default (app: Express): void => {
 	usePassport(app);
 
 	// static files midleware
-	app.use('/images', express.static('./images'));
+	app.use('/api/images', express.static(path.join(__dirname, '..', '/images')));
 
 	// error handler middleware
 };

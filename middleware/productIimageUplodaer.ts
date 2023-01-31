@@ -22,6 +22,6 @@ const productImageUploader = multer({
 		}
 	},
 	limits: { fileSize: 1 * 1024 * 1024 },
-}).array('ProductImage', 5);
+}).array('images', 5);
 
 export default productImageUploader;
