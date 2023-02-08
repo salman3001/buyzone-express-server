@@ -3,14 +3,18 @@ import mongoose, { SchemaDefinition } from 'mongoose';
 const orderSchema = new mongoose.Schema<SchemaDefinition>(
 	{
 		userId: { type: mongoose.Types.ObjectId, required: true },
-		products: [
-			{
-				type: mongoose.Types.ObjectId,
-				ref: 'Product',
-			},
-		],
+		products: {
+			type: [
+				{
+					productId: { type: String, required: true },
+					quantity: { type: Number, required: true },
+					price: { type: Number, required: true },
+				},
+			],
+			required: true,
+		},
 		deliveryAddress: {
-			Builidng: {
+			building: {
 				type: String,
 				required: true,
 			},

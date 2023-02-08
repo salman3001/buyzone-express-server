@@ -1,11 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import Order from '../models/Order';
 
-export const getOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+interface ISearch {
+	status?: 'Pending' | 'Confirmed' | 'Delivered' | 'Cancled';
+}
+
+export const getOrders = async (
+	req: Request<unknown, unknown, unknown, NonNullable<ISearch>>,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
 	try {
 		const user = req?.user;
+		const { status } = req.query;
+		let search: ISearch = {};
+		if (status != null) search.status = status;
+
 		if (user?.isAdmin ?? false) {
-			Order.find().exec((err, result) => {
+			Order.find({ ...search }).exec((err, result) => {
 				if (err != null) {
 					next(err);
 				} else if (result === null) {
@@ -15,13 +27,44 @@ export const getOrder = async (req: Request, res: Response, next: NextFunction):
 				}
 			});
 		} else {
-			Order.find({ _id: user?._id }).exec((err, result) => {
+			Order.find({ _id: user?._id, ...search }).exec((err, result) => {
 				if (err != null) {
 					next(err);
 				} else if (result === null) {
 					res.status(404).send({ message: 'No orders found' });
 				} else {
 					res.status(200).send({ Orders: result });
+				}
+			});
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getOrder = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const user = req?.user;
+		const id = req.params.id;
+
+		if (user?.isAdmin ?? false) {
+			Order.findById(id).exec((err, result) => {
+				if (err != null) {
+					next(err);
+				} else if (result === null) {
+					res.status(404).send({ message: 'No orders found' });
+				} else {
+					res.status(200).send({ Order: result });
+				}
+			});
+		} else {
+			Order.findById({ _id: id, userId: user?._id }).exec((err, result) => {
+				if (err != null) {
+					next(err);
+				} else if (result === null) {
+					res.status(404).send({ message: 'No orders found' });
+				} else {
+					res.status(200).send({ Order: result });
 				}
 			});
 		}
