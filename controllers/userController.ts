@@ -65,3 +65,7 @@ export async function patchUser(req: Request, res: Response, next: NextFunction)
 		next(err);
 	}
 }
+
+export async function isLoggedIn(req: Request, res: Response, next: NextFunction): Promise<void> {
+	res.status(200).json({ message: 'loged in' });
+}

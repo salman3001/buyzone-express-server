@@ -5,7 +5,6 @@ const router = express.Router();
 router.route('/').post((req, res, next) => {
 	req.logOut((err) => {
 		if (err != null) {
-			console.log(err);
 			next(err);
 			return;
 		}
